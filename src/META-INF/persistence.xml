@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="Program_PtiseisPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>program_ptiseis.ProgrammaPtiseon</class>
+    <class>program_ptiseis.Pilot</class>
+    <class>program_ptiseis.Askisi</class>
+    <class>program_ptiseis.ApostoliReal</class>
+    <class>program_ptiseis.BiblioPtiseon</class>
+    <class>program_ptiseis.Aeroskafos</class>
+    <class>program_ptiseis.Apostoli</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/ptiseis"/>
+      <property name="javax.persistence.jdbc.user" value="boul"/>
+      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
+      <property name="javax.persistence.jdbc.password" value="1968"/>
+    </properties>
+  </persistence-unit>
+</persistence>

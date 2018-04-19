@@ -1,0 +1,893 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package program_ptiseis;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.TypedQuery;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author antonis
+ */
+public class BiblioPtiseonForm extends JFrame {
+    JFrame parent;
+    DefaultTableModel tableModel, tableModel1, tableModel2;
+    Pilot pic, cop;
+    Aeroskafos aero;
+    SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat sdf1=new SimpleDateFormat("HH:mm");
+    TypedQuery<ProgrammaPtiseon> programQuery;
+    ProgrammaPtiseon pp;
+    Askisi askisi;
+    Random r=new Random();
+    List<ApostoliReal> apostoles;
+    ApostoliReal apostoliReal;
+    Apostoli apostoli;
+    /**
+     * Creates new form pilotData
+     */
+    public BiblioPtiseonForm(JFrame parent) {
+        this.parent=parent;
+        initComponents();
+        parent.setEnabled(false);
+        tableModel = (DefaultTableModel)pilotTable.getModel();
+        tableModel1 = (DefaultTableModel)aeroskafosTable.getModel();
+        tableModel2 = (DefaultTableModel)apostolesTable.getModel();
+        pilotTable.setSelectionMode(NORMAL);
+        aeroskafosTable.setSelectionMode(NORMAL);
+        pilotList = pilotQuery.getResultList();
+        fillTable();
+        callSignField.setEditable(false);
+
+        // Action Listener για τον πίνακα με τις αποστολές
+        apostolesTable.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            int row = apostolesTable.getSelectedRow();
+            apostoliReal = apostoles.get(row);
+            int idReal = apostoliReal.getId();
+            TypedQuery<Apostoli> query2 =
+                DBManager.em.createNamedQuery("Apostoli.findByApostoliReal", Apostoli.class);
+            query2.setParameter("apostolirealid", apostoliReal);
+            List<Apostoli> res_ap = query2.getResultList();
+
+            apostoli = res_ap.get(0);
+            callSignField.setText(apostoli.getCallsign());
+            proorismosField.setText(apostoliReal.getProorismos());
+            agField.setText(sdf1.format(apostoliReal.getTakeoff()));
+            pgField.setText(sdf1.format(apostoliReal.getLanding()));
+            picField.setText(apostoliReal.getPic()+"");
+            copField.setText(apostoliReal.getCop()+"");
+            snField.setText(apostoliReal.getAeroskafossn());
+            if(apostoliReal.getCompleted() == null || apostoliReal.getCompleted() == 0)
+                completedCheckBox.setSelected(false);            
+             else 
+                completedCheckBox.setSelected(true);
+            
+        }
+        });
+    }
+
+    // Προσθήκη δεδομένων στον πίνακα των πιλότων
+    private void fillTable(){
+        for(Pilot p:pilotList){
+            addPilot(p);
+        }
+        for(Aeroskafos a:aeroskafosList){
+            addAeroskafos(a);
+        }
+    }
+    
+    // Προσθήκη γραμμής στον πίνακα
+    private void addPilot(Pilot p){
+        Vector pilotRow = new Vector();
+        pilotRow.add(p.getId());
+        pilotRow.add(p.getLastname());
+        if(p.getPic()==1)
+            pilotRow.add(true);
+        else
+            pilotRow.add(false);
+        if(p.getEm()==1)
+            pilotRow.add(true);
+        else
+            pilotRow.add(false);
+        if(p.getEkpaideytis()==1)
+            pilotRow.add(true);
+        else
+            pilotRow.add(false);
+        if(p.getDokimastis()==1)
+            pilotRow.add(true);
+        else
+            pilotRow.add(false);
+        if(p.getCommander()==1)
+            pilotRow.add(true);
+        else
+            pilotRow.add(false);
+        pilotRow.add(p.getHoursexam());
+        boolean available=false;
+        if(p.getAvailable()==1)
+            available=true;
+        pilotRow.add(available);        
+        tableModel.addRow(pilotRow);
+    }
+    
+     // Προσθήκη γραμμής στον πίνακα
+    private void addAeroskafos(Aeroskafos a){
+        Vector aeroRow = new Vector();
+        aeroRow.add(a.getSn());
+        aeroRow.add(a.getHoursA());
+        aeroRow.add(a.getHoursB());
+
+        boolean available=false;
+        if(a.getAvailable()==1)
+            available=true;
+        aeroRow.add(available);        
+        tableModel1.addRow(aeroRow);
+    }
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        ProgrammaPtisewnPUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("Program_PtiseisPU").createEntityManager();
+        pilotQuery = java.beans.Beans.isDesignTime() ? null : ProgrammaPtisewnPUEntityManager.createQuery("SELECT p FROM Pilot p WHERE p.available=1");
+        Program_PtiseisPUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("Program_PtiseisPU").createEntityManager();
+        aeroskafosQuery = java.beans.Beans.isDesignTime() ? null : Program_PtiseisPUEntityManager.createQuery("SELECT a FROM Aeroskafos a WHERE a.available=1");
+        aeroskafosList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : aeroskafosQuery.getResultList();
+        askisiQuery = java.beans.Beans.isDesignTime() ? null : Program_PtiseisPUEntityManager.createQuery("SELECT a FROM Askisi a");
+        askisiList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : askisiQuery.getResultList();
+        askisiQuery1 = java.beans.Beans.isDesignTime() ? null : Program_PtiseisPUEntityManager.createQuery("SELECT a.id FROM Askisi a");
+        askisiList1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : askisiQuery1.getResultList();
+        jButton5 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        pilotTable = new javax.swing.JTable() ;
+        jLabel7 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        saveButton1 = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        aeroskafosTable = new javax.swing.JTable() ;
+        picField = new javax.swing.JTextField();
+        picButton = new javax.swing.JButton();
+        copButton = new javax.swing.JButton();
+        copField = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
+        snField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        callSignField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        proorismosField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        pgField = new javax.swing.JTextField();
+        dateField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        agField = new javax.swing.JTextField();
+        jButton6 = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        apostolesTable = new javax.swing.JTable();
+        jLabel12 = new javax.swing.JLabel();
+        completedCheckBox = new javax.swing.JCheckBox();
+        neaEpexButton = new javax.swing.JButton();
+
+        jToggleButton1.setText("jToggleButton1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 51, 102));
+
+        jButton5.setText("ΈΞΟΔΟΣ");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        pilotTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Επώνυμο", "PiC", "Έμπειρος", "Εκπαιδευτής", "Δοκιμαστής", "Αρχ. Σχημ.", "Ώρες Εξαμ."
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(pilotTable);
+
+        jLabel7.setText(">> Αρχείο");
+
+        jLabel6.setText("Αρχείο >> Δεδομένα ");
+
+        saveButton1.setText("Αποθήκευση");
+        saveButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel8.setText("Πιλότοι");
+
+        jLabel9.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel9.setText("Αεροσκάφη");
+
+        aeroskafosTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "SN", "Ώρες Α", "Ώρες Β"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(aeroskafosTable);
+
+        picField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                picFieldActionPerformed(evt);
+            }
+        });
+
+        picButton.setText("PiC >");
+        picButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                picButtonActionPerformed(evt);
+            }
+        });
+
+        copButton.setText("CoP >");
+        copButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copButtonActionPerformed(evt);
+            }
+        });
+
+        copField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copFieldActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("SN >");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        snField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                snFieldActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("X");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("X");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText("X");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("CallSign:");
+
+        jLabel3.setText("Α/Γ:");
+
+        jLabel4.setText("Π/Γ:");
+
+        dateField.setBackground(new java.awt.Color(121, 225, 212));
+        dateField.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+
+        jLabel5.setText("Ημέρα:");
+
+        jLabel10.setText("Αποστολή:");
+
+        jButton6.setText("Προβολή");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setFont(new java.awt.Font("Noto Sans", 1, 13)); // NOI18N
+        jLabel11.setText("Αποστολή");
+
+        apostolesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Κυβέρνητης", "Συγκυβερνήτης", "CallSign", "S/N", "Άσκηση", "Α/Γ", "Π/Γ", "Αποστολή"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(apostolesTable);
+
+        jLabel12.setFont(new java.awt.Font("Noto Sans", 1, 13)); // NOI18N
+        jLabel12.setText("Βιβλίο Πτήσεων");
+
+        completedCheckBox.setText("Καταχωρημένη");
+
+        neaEpexButton.setText("Νέα Επεξεργασία");
+        neaEpexButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                neaEpexButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(155, 155, 155)
+                                        .addComponent(jLabel8)
+                                        .addGap(10, 10, 10))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(143, 143, 143)
+                                        .addComponent(jLabel9))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(saveButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(141, 141, 141))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(157, 157, 157)))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addComponent(proorismosField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(15, 15, 15)
+                                                        .addComponent(snField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                    .addComponent(agField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(pgField, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jButton5)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(jLabel7)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButton4))))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(jLabel11)
+                                                .addGap(86, 86, 86))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabel1)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(callSignField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addComponent(picButton, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(copButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                            .addComponent(picField)
+                                                            .addComponent(copField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jButton1)
+                                                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)))))))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 812, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(57, 57, 57)
+                        .addComponent(completedCheckBox))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(neaEpexButton, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(97, 97, 97))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(197, 197, 197)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(361, 361, 361)
+                        .addComponent(jLabel12)))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel5)
+                                .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel12)
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(callSignField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(12, 12, 12)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(picButton)
+                                    .addComponent(picField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(copButton)
+                                    .addComponent(copField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton2))
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButton3)
+                                    .addComponent(snField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton4))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(proorismosField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(agField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(pgField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(173, 173, 173)
+                        .addComponent(neaEpexButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(completedCheckBox)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jLabel7)
+                    .addComponent(saveButton1))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        dispose();
+        parent.setEnabled(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void saveButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButton1ActionPerformed
+        String dateStr = dateField.getText();
+        String callSign, agStr, pgStr, proorismos;
+        Date date, time1, time2;
+        
+        if(apostoliReal.getCompleted()==1){
+                JOptionPane.showMessageDialog(this, "Η αποστολή έχει ήδη αποθηκευτεί");
+                return;
+            }
+        
+        if(dateStr.length()==0){
+            JOptionPane.showMessageDialog(this, "H ημερομηνία δεν μπορεί να είναι κενή");
+            return;
+        }
+        try {
+            
+            date = sdf.parse(dateStr);
+            callSign = callSignField.getText();
+            // Ώρα απογείωσης και προσγείωσης
+            agStr = agField.getText();
+            pgStr = pgField.getText();
+            time1 = sdf1.parse(agStr);
+            time2 = sdf1.parse(pgStr);
+            // Ο χρόνος σε milliseconds
+            long ms1=time1.getTime();
+            long ms2=time2.getTime();
+            long diff = ms2-ms1;
+            if(diff<=0) {
+                JOptionPane.showMessageDialog(this, "Λάθος χρόνοι απογείωσης και προσγείωσης");
+                return;
+            }
+            // Η διαφορά σε ώρες
+            float hoursDiff = diff/1000 / (float)3600.0 ;
+            proorismos = proorismosField.getText();
+            if(callSign.length()==0 || agStr.length()==0 || pgStr.length()==0 || proorismos.length()==0){
+                JOptionPane.showMessageDialog(this, "Ελλειπή υποχρεωτικά στοιχεία");
+                return;
+            }
+
+            // To id της αποστολής
+            int id = apostoliReal.getId();
+            // Ερώτημα για να βρούμε την αποστολή
+            TypedQuery<ApostoliReal> query =
+                DBManager.em.createNamedQuery("ApostoliReal.findByApostoli", ApostoliReal.class);
+            query.setParameter("apostoliid", id);
+            if(pic == null)
+                pic = apostoli.getPic();
+            apostoliReal.setPic(apostoli.getPic().getId());
+            if(cop == null)
+                cop = apostoli.getCop();
+            apostoliReal.setCop(cop.getId());
+            if(aero == null)
+                aero = apostoli.getAeroskafossn();
+            apostoliReal.setAeroskafossn(aero.getSn());
+            apostoliReal.setProorismos(proorismos);
+            apostoliReal.setTakeoff(time1);
+            apostoliReal.setLanding(time2);
+            apostoliReal.setCompleted((short)1);
+            pic.addHours(hoursDiff);
+            cop.addHours(hoursDiff);
+            aero.subHours(hoursDiff);
+            DBManager.modifyObject(aero);
+            DBManager.modifyObject(cop);
+            DBManager.modifyObject(pic);
+            DBManager.modifyObject(apostoliReal);
+
+            clearForm();
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(this, "H ημερομηνία πρέπει να έχει τη μορφή dd/mm/yyyy");
+        }
+    }//GEN-LAST:event_saveButton1ActionPerformed
+
+    private void clearForm(){
+        this.snField.setText("");
+        this.callSignField.setText("");
+        this.picField.setText("");
+        this.copField.setText("");
+        this.proorismosField.setText("");
+        this.agField.setText("");
+        this.pgField.setText("");
+    }
+    
+    private void picFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_picFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_picFieldActionPerformed
+
+    private void copFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_copFieldActionPerformed
+
+    private void snFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_snFieldActionPerformed
+
+    private void picButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_picButtonActionPerformed
+        int row=this.pilotTable.getSelectedRow();
+        if(row==-1)
+            JOptionPane.showMessageDialog(this, "Επιλέξτε πρώτα πιλότο");
+        else {
+            pic = pilotList.get(row);
+            if(pic.getPic()==0){
+                JOptionPane.showMessageDialog(this, "Ο ιπτάμενος δεν είναι PiC");
+                pic=null;
+            // Έλεγχος αν έχει επιλεγεί ήδη ο πιλότος
+            }else if(cop!=null && pic.getId() == cop.getId()){
+                JOptionPane.showMessageDialog(this, "O πιλότος είναι ήδη επιλεγμένος");
+                pic=null;
+            }else {
+                picField.setText(pic.getId()+" "+pic.getLastname()+" "+pic.getFirstname());
+            }
+        }
+    }//GEN-LAST:event_picButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        picField.setText("");
+        pic=null;
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        copField.setText("");
+        cop=null;
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        snField.setText("");
+        aero=null;
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void copButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copButtonActionPerformed
+        int row=this.pilotTable.getSelectedRow();
+        if(row==-1)
+            JOptionPane.showMessageDialog(this, "Επιλέξτε πρώτα πιλότο");
+        else {
+            cop = pilotList.get(row);
+            // Έλεγχος αν έχει επιλεγεί ήδη ο πιλότος
+            if(pic!=null && pic.getId() == cop.getId()){
+                JOptionPane.showMessageDialog(this, "O πιλότος είναι ήδη επιλεγμένος");
+                cop=null;
+            }else {
+                copField.setText(cop.getId()+" "+cop.getLastname()+" "+cop.getFirstname());
+            }
+        }
+    }//GEN-LAST:event_copButtonActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int row=this.aeroskafosTable.getSelectedRow();
+        if(row==-1)
+            JOptionPane.showMessageDialog(this, "Επιλέξτε πρώτα αεροσκάφος");
+        else {
+            aero =  aeroskafosList.get(row);
+            snField.setText(aero.getSn()+"");
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        String dateStr = dateField.getText();       
+        Date date;
+        if(dateStr.length()==0){
+            JOptionPane.showMessageDialog(this, "H ημερομηνία δεν μπορεί να είναι κενή");
+            return;
+        }
+        try {
+            date = sdf.parse(dateStr);
+            programQuery= DBManager.em.createNamedQuery("ProgrammaPtiseon.findByDate", ProgrammaPtiseon.class);
+            programQuery.setParameter("date", date);
+            List<ProgrammaPtiseon> results = programQuery.getResultList();
+            // Καθαρίζουμε τον πίνακα με τις αποστολές
+            int rows = tableModel2.getRowCount();
+            for(int i=0;i<rows;i++)
+                tableModel2.removeRow(0);
+            if(results.size()>0){
+                TypedQuery<BiblioPtiseon> q = ProgrammaPtisewnPUEntityManager.createNamedQuery("BiblioPtiseon.findByDate", BiblioPtiseon.class);
+                q.setParameter("date", date);
+                List<BiblioPtiseon> bpList = q.getResultList();
+                int bpId = bpList.get(0).getId();
+                
+                ProgrammaPtiseon pp1 = results.get(0);
+                int ppId = pp1.getId();
+                TypedQuery<ApostoliReal> query1 = ProgrammaPtisewnPUEntityManager.createNamedQuery("ApostoliReal.findAll", ApostoliReal.class);
+                apostoles = query1.getResultList();
+                
+                for(ApostoliReal ar:apostoles){
+                    if(ar.getBiblioPtiseonid() == bpId)
+                        addApostoli(ar);
+                    
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Δεν υπάρχουν αποστολές για την ημερομηνία:"+sdf.format(date));
+            }
+           
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(this, "H ημερομηνία πρέπει να έχει τη μορφή dd/mm/yyyy");
+        }
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void neaEpexButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_neaEpexButtonActionPerformed
+        if(apostoliReal == null){
+            JOptionPane.showMessageDialog(this, "Πρέπει να επιλεγεί μία Αποστολή");
+            return;
+        }
+        apostoliReal.setCompleted((short)0);
+        this.completedCheckBox.setSelected(false);
+        // Ώρα απογείωσης και προσγείωσης
+        String agStr = agField.getText();
+        String pgStr = pgField.getText();
+        Date time1;
+        try {
+            time1 = sdf1.parse(agStr);
+            Date time2 = sdf1.parse(pgStr);
+             // Ο χρόνος σε milliseconds
+            long ms1=time1.getTime();
+            long ms2=time2.getTime();
+            long diff = ms2-ms1;
+            if(diff<=0) {
+                JOptionPane.showMessageDialog(this, "Λάθος χρόνοι απογείωσης και προσγείωσης");
+                return;
+            }
+            // Η διαφορά σε ώρες
+            float hoursDiff = diff/1000 / (float)3600.0 ;
+            // To id της αποστολής
+            int id = apostoliReal.getId();
+            // Ερώτημα για να βρούμε την αποστολή
+            TypedQuery<ApostoliReal> query =
+                DBManager.em.createNamedQuery("ApostoliReal.findByApostoli", ApostoliReal.class);
+            query.setParameter("apostoliid", id);
+            if(pic == null)
+                pic = apostoli.getPic();
+            if(cop == null)
+                cop = apostoli.getCop();
+            if(aero == null)
+                aero = apostoli.getAeroskafossn();
+            pic.subHours(hoursDiff);
+            cop.subHours(hoursDiff);
+            aero.addHours(hoursDiff);
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(this, "Λάθος μορφή ώρας");
+        }
+        
+           
+    }//GEN-LAST:event_neaEpexButtonActionPerformed
+
+    private void addApostoli(ApostoliReal a){
+        TypedQuery<Apostoli> query2 =
+                DBManager.em.createNamedQuery("Apostoli.findByApostoliReal", Apostoli.class);
+        query2.setParameter("apostolirealid", a);
+        List<Apostoli> res_ap = query2.getResultList();
+        apostoli = res_ap.get(0);
+        Vector apostoliRow = new Vector();
+        apostoliRow.add(a.getPic());
+        apostoliRow.add(a.getCop());
+        apostoliRow.add(apostoli.getCallsign());
+        apostoliRow.add(a.getAeroskafossn());
+        apostoliRow.add(apostoli.getAskisiid().getId());
+        apostoliRow.add(sdf1.format(a.getTakeoff()));
+        apostoliRow.add(sdf1.format(a.getLanding()));
+        apostoliRow.add(a.getProorismos());
+        tableModel2.addRow(apostoliRow);
+    }
+   
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.persistence.EntityManager Program_PtiseisPUEntityManager;
+    private javax.persistence.EntityManager ProgrammaPtisewnPUEntityManager;
+    private java.util.List<program_ptiseis.Aeroskafos> aeroskafosList;
+    private javax.persistence.Query aeroskafosQuery;
+    private javax.swing.JTable aeroskafosTable;
+    private javax.swing.JTextField agField;
+    private javax.swing.JTable apostolesTable;
+    private java.util.List<program_ptiseis.Askisi> askisiList;
+    private java.util.List<program_ptiseis.Askisi> askisiList1;
+    private javax.persistence.Query askisiQuery;
+    private javax.persistence.Query askisiQuery1;
+    private javax.swing.JTextField callSignField;
+    private javax.swing.JCheckBox completedCheckBox;
+    private javax.swing.JButton copButton;
+    private javax.swing.JTextField copField;
+    private javax.swing.JTextField dateField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JButton neaEpexButton;
+    private javax.swing.JTextField pgField;
+    private javax.swing.JButton picButton;
+    private javax.swing.JTextField picField;
+    private javax.persistence.Query pilotQuery;
+    private javax.swing.JTable pilotTable;
+    private javax.swing.JTextField proorismosField;
+    private javax.swing.JButton saveButton1;
+    private javax.swing.JTextField snField;
+    // End of variables declaration//GEN-END:variables
+    List<Pilot> pilotList=new ArrayList();
+}
